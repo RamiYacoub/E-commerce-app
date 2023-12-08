@@ -1,13 +1,15 @@
+import 'package:e_commerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:e_commerce_app/views/pages/cart_page.dart';
 import 'package:e_commerce_app/views/pages/favorites_page.dart';
 import 'package:e_commerce_app/views/pages/home_page.dart';
 import 'package:e_commerce_app/views/pages/profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 class CustomBottomNavbar extends StatefulWidget {
-  const CustomBottomNavbar({super.key, required String title});
+  const CustomBottomNavbar({super.key, String? title});
 
   @override
   State<CustomBottomNavbar> createState() => _CustomBottomNavbarState();
@@ -23,11 +25,18 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
   }
 
   List<Widget> _buildScreens() {
-    return const [
-      HomePage(),
-      CartPage(),
-      FavoritesPage(),
-      ProfilePage(),
+    return [
+      BlocProvider(
+        create: (context) {
+          final cubit = HomeCubit();
+          cubit.getHomeData();
+          return cubit;
+        },
+        child: const HomePage(),
+      ),
+      const CartPage(),
+      const FavoritesPage(),
+      const ProfilePage(),
     ];
   }
 
