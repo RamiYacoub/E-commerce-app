@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/utils/app_routes.dart';
 import 'package:e_commerce_app/utils/colors_app.dart';
 import 'package:e_commerce_app/views/widgets/category_tab_view.dart';
 import 'package:e_commerce_app/views/widgets/home_tab_view.dart';
@@ -69,7 +70,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true).pushNamed(
+                            AppRoutes.searchPage,
+                          );
+                        },
                         icon: const Icon(Icons.search),
                       ),
                       IconButton(
