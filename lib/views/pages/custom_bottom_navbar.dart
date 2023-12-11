@@ -1,3 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_app/utils/app_routes.dart';
+import 'package:e_commerce_app/view_models/cart_cubit/cart_cubit.dart';
 import 'package:e_commerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:e_commerce_app/views/pages/cart_page.dart';
 import 'package:e_commerce_app/views/pages/favorites_page.dart';
@@ -17,11 +20,24 @@ class CustomBottomNavbar extends StatefulWidget {
 
 class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
   late final PersistentTabController _controller;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = PersistentTabController();
+    _controller.addListener(() {
+      debugPrint('Controller Index : ${_controller.index}');
+      setState(() {
+        _currentIndex = _controller.index;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   List<Widget> _buildScreens() {
@@ -34,7 +50,14 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
         },
         child: const HomePage(),
       ),
-      const CartPage(),
+      BlocProvider(
+        create: (context) {
+          final cubit = CartCubit();
+          cubit.getCartItems();
+          return cubit;
+        },
+        child: const CartPage(),
+      ),
       const FavoritesPage(),
       const ProfilePage(),
     ];
@@ -71,28 +94,82 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      confineInSafeArea: true,
-      decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: Colors.white,
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: false,
+        leading: const Padding(
+          padding: EdgeInsetsDirectional.only(start: 8.0),
+          child: CircleAvatar(
+            radius: 30,
+            backgroundImage: CachedNetworkImageProvider(
+                'https://www.shorouknews.com/uploadedimages/Other/original/2023-11-2018_46_53.119381-qdffe-980x980.jpg'),
+          ),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Hi Abu Obaida',
+              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            Text(
+              'Let\'s go shopping',
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                    color: Colors.grey,
+                  ),
+            ),
+          ],
+        ),
+        actions: [
+          if (_currentIndex == 0) ...[
+            IconButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pushNamed(
+                  AppRoutes.searchPage,
+                );
+              },
+              icon: const Icon(Icons.search),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.notifications_none),
+            )
+          ],
+          if (_currentIndex == 1)
+            TextButton.icon(
+              icon: const Icon(Icons.shopping_bag),
+              label: const Text('My Oreders'),
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.myOrders);
+              },
+            )
+        ],
       ),
-      popAllScreensOnTapOfSelectedTab: true,
-      popActionScreens: PopActionScreensType.all,
-      itemAnimationProperties: const ItemAnimationProperties(
-        duration: Duration(milliseconds: 200),
-        curve: Curves.ease,
+      body: PersistentTabView(
+        context,
+        controller: _controller,
+        screens: _buildScreens(),
+        items: _navBarsItems(),
+        confineInSafeArea: true,
+        decoration: NavBarDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          colorBehindNavBar: Colors.white,
+        ),
+        popAllScreensOnTapOfSelectedTab: true,
+        popActionScreens: PopActionScreensType.all,
+        itemAnimationProperties: const ItemAnimationProperties(
+          duration: Duration(milliseconds: 200),
+          curve: Curves.ease,
+        ),
+        screenTransitionAnimation: const ScreenTransitionAnimation(
+          animateTabTransition: true,
+          curve: Curves.ease,
+          duration: Duration(milliseconds: 200),
+        ),
+        navBarStyle: NavBarStyle.style6,
       ),
-      screenTransitionAnimation: const ScreenTransitionAnimation(
-        animateTabTransition: true,
-        curve: Curves.ease,
-        duration: Duration(milliseconds: 200),
-      ),
-      navBarStyle: NavBarStyle.style6,
     );
   }
 }

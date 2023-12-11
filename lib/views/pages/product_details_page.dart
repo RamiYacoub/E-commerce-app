@@ -89,10 +89,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         height: 550,
                         width: 430,
                         alignment: Alignment.center,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(
-                                'https://www.seasaltcornwall.com/media/catalog/product/b/_/b_wm23525_29623_2.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=795&width=530&canvas=530:795'),
+                            image: NetworkImage(state.productItem.imgUrl),
                             fit: BoxFit.fill,
                           ),
                         ),
