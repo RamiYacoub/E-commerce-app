@@ -1,19 +1,23 @@
 import 'package:e_commerce_app/models/product_category_model.dart';
-import 'package:e_commerce_app/models/product_item_model.dart';
 import 'package:e_commerce_app/utils/colors_app.dart';
+import 'package:e_commerce_app/view_models/favourite_cubit/favourite_cubit.dart';
 import 'package:e_commerce_app/views/widgets/product_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FavouritesPage extends StatefulWidget {
-  const FavouritesPage({super.key});
+class FavouritePage extends StatefulWidget {
+  const FavouritePage({super.key});
 
   @override
-  State<FavouritesPage> createState() => _FavouritesPageState();
+  State<FavouritePage> createState() => _FavouritePageState();
 }
 
-class _FavouritesPageState extends State<FavouritesPage> {
+class _FavouritePageState extends State<FavouritePage> {
+  late FavouriteCubit cubit;
+
   @override
   Widget build(BuildContext context) {
+    cubit = BlocProvider.of<FavouriteCubit>(context);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -70,18 +74,34 @@ class _FavouritesPageState extends State<FavouritesPage> {
               ),
             ),
           ),
-          GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: dummyProducts.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 18,
-              mainAxisSpacing: 18,
-            ),
-            itemBuilder: (context, index) => ProductItem(
-              productItem: dummyProducts[index],
-            ),
+          BlocBuilder<FavouriteCubit, FavouriteState>(
+            buildWhen: (previous, current) {
+              return current is FavouriteLoaded;
+            },
+            bloc: cubit,
+            builder: (context, state) {
+              if (state is FavouriteLoading) {
+                return const Center(
+                    child: CircularProgressIndicator.adaptive());
+              } else if (state is FavouriteLoaded) {
+                return GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: state.favouriteItems.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 18,
+                    mainAxisSpacing: 18,
+                  ),
+                  itemBuilder: (context, index) => ProductItem(
+                    productItem: state.favouriteItems[index],
+                    cubit: cubit,
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
         ],
       ),

@@ -20,4 +20,17 @@ class HomeCubit extends Cubit<HomeState> {
       );
     });
   }
+
+  void changeFavourite(String prodcutId){
+    int index = dummyProducts.indexWhere((element) => element.id == prodcutId,);
+    dummyProducts[index] = dummyProducts[index].copyWith(isFavorite: !dummyProducts[index].isFavorite);
+    emit(
+      HomeLoaded(
+        products: dummyProducts,
+        carouselItems: dummyCarouselItems,
+        categorys: listOfCategorys,
+      ),
+    );
+    
+  }
 }

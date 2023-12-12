@@ -4,29 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readmore/readmore.dart';
 
 class ProductDetailsPage extends StatefulWidget {
-  const ProductDetailsPage({super.key});
+  final int index;
+  const ProductDetailsPage({super.key, required this.index});
 
   @override
   State<ProductDetailsPage> createState() => _ProductDetailsPageState();
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  int quantity = 1;
-
-  void _decreaseQuantity() {
-    setState(() {
-      if (quantity > 1) {
-        quantity -= 1;
-      }
-    });
-  }
-
-  void _increaseQuantity() {
-    setState(
-      () => quantity += 1,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final cubit = BlocProvider.of<ProductDetailsCubit>(context);
@@ -35,7 +20,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       builder: (context, state) {
         if (state is ProductDetailsLoading) {
           return Scaffold(
+            extendBodyBehindAppBar: true,
             appBar: AppBar(
+              backgroundColor: Colors.transparent,
               title: const Center(child: Text('Product Details')),
               actions: [
                 IconButton(
@@ -69,11 +56,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               title: const Center(child: Text('Product Details')),
               actions: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    cubit.changeFavorite(state.productItem.id);
+                  },
                   icon: Icon(
-                    Icons.favorite_border,
-                    color: Theme.of(context).primaryColor,
-                  ),
+                      state.productItem.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Theme.of(context).primaryColor),
                 ),
                 const SizedBox(
                   width: 8.0,
@@ -145,18 +135,23 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         child: Row(
                                           children: [
                                             IconButton(
-                                              onPressed: _decreaseQuantity,
+                                              onPressed: () {
+                                                cubit.decrement(widget.index);
+                                              },
                                               icon: const Icon(Icons.remove),
                                             ),
                                             const SizedBox(
                                               width: 4.0,
                                             ),
-                                            Text('$quantity'),
+                                            Text(
+                                                '${state.productItem.quantity}'),
                                             const SizedBox(
                                               width: 4.0,
                                             ),
                                             IconButton(
-                                              onPressed: _increaseQuantity,
+                                              onPressed: () {
+                                                cubit.increment(widget.index);
+                                              },
                                               icon: const Icon(Icons.add),
                                             ),
                                           ],
@@ -247,7 +242,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               ),
                             ),
                             Text(
-                              ' ${(state.productItem.price * quantity).toStringAsFixed(2)}',
+                              ' ${(state.productItem.price * state.productItem.quantity).toStringAsFixed(2)}',
                               style: const TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,

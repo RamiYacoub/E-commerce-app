@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce_app/utils/app_routes.dart';
 import 'package:e_commerce_app/view_models/cart_cubit/cart_cubit.dart';
+import 'package:e_commerce_app/view_models/favourite_cubit/favourite_cubit.dart';
 import 'package:e_commerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:e_commerce_app/views/pages/cart_page.dart';
 import 'package:e_commerce_app/views/pages/favourite_page.dart';
@@ -20,24 +21,11 @@ class CustomBottomNavbar extends StatefulWidget {
 
 class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
   late final PersistentTabController _controller;
-  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = PersistentTabController();
-    _controller.addListener(() {
-      debugPrint('Controller Index : ${_controller.index}');
-      setState(() {
-        _currentIndex = _controller.index;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   List<Widget> _buildScreens() {
@@ -58,7 +46,14 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
         },
         child: const CartPage(),
       ),
-      const FavouritesPage(),
+      BlocProvider(
+        create: (context) {
+          final cubit = FavouriteCubit();
+          cubit.getFavoriteItems();
+          return cubit;
+        },
+        child: const FavouritePage(),
+      ),
       const ProfilePage(),
     ];
   }
@@ -109,7 +104,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hi Abu Obaida',
+              'Hi Abu Obauida',
               style: Theme.of(context).textTheme.labelLarge!.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -123,7 +118,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
           ],
         ),
         actions: [
-          if (_currentIndex == 0) ...[
+          if (_controller.index == 0) ...[
             IconButton(
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pushNamed(
@@ -137,7 +132,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
               icon: const Icon(Icons.notifications_none),
             )
           ],
-          if (_currentIndex == 1)
+          if (_controller.index == 1)
             TextButton.icon(
               icon: const Icon(Icons.shopping_bag),
               label: const Text('My Oreders'),
@@ -145,7 +140,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
                 Navigator.of(context).pushNamed(AppRoutes.myOrders);
               },
             ),
-          if (_currentIndex == 2)
+          if (_controller.index == 2)
             TextButton.icon(
               icon: const Icon(Icons.notifications_active_outlined),
               label: const Text(''),
@@ -177,6 +172,12 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
           duration: Duration(milliseconds: 200),
         ),
         navBarStyle: NavBarStyle.style6,
+        onItemSelected: (value) {
+          setState(() {
+            _controller.index = value;
+          });
+        },
+        stateManagement: false,
       ),
     );
   }

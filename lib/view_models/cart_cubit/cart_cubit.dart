@@ -45,14 +45,17 @@ class CartCubit extends Cubit<CartState> {
 
   void decrement(String prodcutId) {
     final index = dummyProducts.indexWhere((item) => item.id == prodcutId);
-    dummyProducts[index] = dummyProducts[index].copyWith(
-      quantity: dummyProducts[index].quantity - 1,
-    );
-    emit(
-      QuantityCounterLoaded(
-        value: dummyProducts[index].quantity,
-        productId: prodcutId,
-      ),
-    );
+    int quantity = dummyProducts[index].quantity;
+    if (quantity > 1) {
+      dummyProducts[index] = dummyProducts[index].copyWith(
+        quantity: dummyProducts[index].quantity - 1,
+      );
+      emit(
+        QuantityCounterLoaded(
+          value: dummyProducts[index].quantity,
+          productId: prodcutId,
+        ),
+      );
+    }
   }
 }

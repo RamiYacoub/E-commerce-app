@@ -29,15 +29,13 @@ class CartItemWidget extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: CachedNetworkImage(
-                      imageUrl: productItem.imgUrl,
-                      fit: BoxFit.cover,
-                      height: 120,
-                      width: 200,
-                    ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: CachedNetworkImage(
+                    imageUrl: productItem.imgUrl,
+                    fit: BoxFit.fitWidth,
+                    height: 120,
+                    width: 500,
                   ),
                 ),
                 PositionedDirectional(
@@ -126,11 +124,34 @@ class CartItemWidget extends StatelessWidget {
                     ),
                 ],
               ),
-              Text(
-                '\$${productItem.price}',
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+              BlocBuilder<CartCubit, CartState>(
+                buildWhen: (previous, current) =>
+                    (current is QuantityCounterLoaded &&
+                        current.productId == productItem.id) ||
+                    current is CartLoaded,
+                builder: (context, state) {
+                  if (state is QuantityCounterLoaded) {
+                    return Text(
+                      '\$${(productItem.price * state.value).toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    );
+                  } else if (state is CartLoaded) {
+                    double price = productItem.price;
+                    int quantity = state.cartItems
+                        .firstWhere(
+                          (item) => item.id == productItem.id,
+                        )
+                        .quantity;
+                    return Text('\$${(price * quantity).toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ));
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
               )
             ],
           ),
