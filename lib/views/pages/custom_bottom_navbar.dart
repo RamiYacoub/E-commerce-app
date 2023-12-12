@@ -3,7 +3,7 @@ import 'package:e_commerce_app/utils/app_routes.dart';
 import 'package:e_commerce_app/view_models/cart_cubit/cart_cubit.dart';
 import 'package:e_commerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:e_commerce_app/views/pages/cart_page.dart';
-import 'package:e_commerce_app/views/pages/favorites_page.dart';
+import 'package:e_commerce_app/views/pages/favourite_page.dart';
 import 'package:e_commerce_app/views/pages/home_page.dart';
 import 'package:e_commerce_app/views/pages/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
         },
         child: const CartPage(),
       ),
-      const FavoritesPage(),
+      const FavouritesPage(),
       const ProfilePage(),
     ];
   }
@@ -144,7 +144,15 @@ class _CustomBottomNavbarState extends State<CustomBottomNavbar> {
               onPressed: () {
                 Navigator.of(context).pushNamed(AppRoutes.myOrders);
               },
-            )
+            ),
+          if (_currentIndex == 2)
+            TextButton.icon(
+              icon: const Icon(Icons.notifications_active_outlined),
+              label: const Text(''),
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.myfavourites);
+              },
+            ),
         ],
       ),
       body: PersistentTabView(

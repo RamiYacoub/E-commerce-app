@@ -8,8 +8,8 @@ class ProductItemModel {
   final bool isFavorite;
   final String description;
   final double price;
+  final double quantityPrice;
   final String category;
-
   final int quantity;
   final Size? size;
   final bool isAddedToCart;
@@ -22,8 +22,9 @@ class ProductItemModel {
     this.description =
         'dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy dummy  ',
     required this.price,
+    required this.quantityPrice,
     required this.category,
-    this.quantity=0,
+    required this.quantity,
     this.size,
     this.isAddedToCart = false,
   });
@@ -35,6 +36,7 @@ class ProductItemModel {
     bool? isFavorite,
     String? description,
     double? price,
+    double? quantityPrice,
     String? category,
     int? quantity,
     Size? size,
@@ -47,6 +49,7 @@ class ProductItemModel {
       isFavorite: isFavorite ?? this.isFavorite,
       description: description ?? this.description,
       price: price ?? this.price,
+      quantityPrice: quantityPrice ?? this.quantityPrice,
       category: category ?? this.category,
       quantity: quantity ?? this.quantity,
       size: size ?? this.size,
@@ -66,6 +69,7 @@ List<ProductItemModel> dummyProducts = [
     isAddedToCart: true,
     quantity: 2,
     size: Size.L,
+    quantityPrice: 8.1,
   ),
   const ProductItemModel(
     id: '2',
@@ -77,6 +81,7 @@ List<ProductItemModel> dummyProducts = [
     isAddedToCart: true,
     quantity: 2,
     size: Size.XL,
+    quantityPrice: 8.2,
   ),
   const ProductItemModel(
     id: '3',
@@ -88,6 +93,7 @@ List<ProductItemModel> dummyProducts = [
     isAddedToCart: true,
     quantity: 3,
     size: Size.S,
+    quantityPrice: 8.3,
   ),
   const ProductItemModel(
     id: '4',
@@ -97,7 +103,8 @@ List<ProductItemModel> dummyProducts = [
     price: 8.4,
     category: 'clothes',
     isAddedToCart: true,
-    quantity: 5,  
+    quantity: 5,
+    quantityPrice: 8.4,
   ),
   const ProductItemModel(
     id: '5',
@@ -106,6 +113,9 @@ List<ProductItemModel> dummyProducts = [
         'https://www.seasaltcornwall.com/media/catalog/product/b/_/b_wm31098_29875_2.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=795&width=530&canvas=530:795',
     price: 8.5,
     category: 'clothes',
+    quantityPrice: 8.5,
+    quantity: 2,
+    isAddedToCart: true,
   ),
   const ProductItemModel(
     id: '6',
@@ -114,5 +124,30 @@ List<ProductItemModel> dummyProducts = [
         'https://www.seasaltcornwall.com/media/catalog/product/b/_/b_wm31313_29627_2.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=795&width=530&canvas=530:795',
     price: 8.6,
     category: 'clothes',
+    quantityPrice: 8.6,
+    quantity: 8,
+    isAddedToCart: true,
+  ),
+  const ProductItemModel(
+    id: '7',
+    name: 'name7',
+    imgUrl:
+        'https://www.seasaltcornwall.com/media/catalog/product/b/_/b_wm31098_29875_2.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=795&width=530&canvas=530:795',
+    price: 8.7,
+    category: 'clothes',
+    quantityPrice: 8.7,
+    quantity: 2,
+    isAddedToCart: true,
+  ),
+  const ProductItemModel(
+    id: '8',
+    name: 'name8',
+    imgUrl:
+        'https://www.seasaltcornwall.com/media/catalog/product/b/_/b_wm31313_29627_2.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=795&width=530&canvas=530:795',
+    price: 8.8,
+    category: 'clothes',
+    quantityPrice: 8.8,
+    quantity: 8,
+    isAddedToCart: true,
   ),
 ];
