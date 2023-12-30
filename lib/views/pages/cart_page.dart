@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/utils/app_routes.dart';
 import 'package:e_commerce_app/view_models/cart_cubit/cart_cubit.dart';
 import 'package:e_commerce_app/views/widgets/cart_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,37 @@ class CartPage extends StatelessWidget {
             child: CircularProgressIndicator.adaptive(),
           );
         } else if (state is CartLoaded) {
-          return ListView.builder(
-            itemCount: state.cartItems.length,
-            itemBuilder: (context, index) {
-              final item = state.cartItems[index];
-              return CartItemWidget(productItem: item);
-            },
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.symmetric(vertical: 24),
+              child: Column(
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: state.cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = state.cartItems[index];
+                      return CartItemWidget(productItem: item);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          onPressed: () =>
+                              Navigator.of(context, rootNavigator: true)
+                                  .pushNamed(AppRoutes.paymentPage),
+                          child: const Text('Check Out')),
+                    ),
+                  )
+                ],
+              ),
+            ),
           );
         } else if (state is CartError) {
           return Center(

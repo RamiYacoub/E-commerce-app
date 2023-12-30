@@ -1,15 +1,17 @@
 import 'package:e_commerce_app/utils/app_routes.dart';
 import 'package:e_commerce_app/view_models/cart_cubit/cart_cubit.dart';
+import 'package:e_commerce_app/view_models/payment_cubit/payment_cubit.dart';
 import 'package:e_commerce_app/view_models/product_cubit/product_details_cubit.dart';
 import 'package:e_commerce_app/view_models/search_cubit/search_cubit.dart';
 import 'package:e_commerce_app/views/pages/cart_page.dart';
 import 'package:e_commerce_app/views/pages/custom_bottom_navbar.dart';
+import 'package:e_commerce_app/views/pages/location_page.dart';
 import 'package:e_commerce_app/views/pages/my_orders_page.dart';
+import 'package:e_commerce_app/views/pages/payment_page.dart';
 import 'package:e_commerce_app/views/pages/product_details_page.dart';
 import 'package:e_commerce_app/views/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -38,7 +40,7 @@ class AppRouter {
       case AppRoutes.searchPage:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_){
+            create: (_) {
               final cubit = SearchCubit();
               cubit.getSearchData();
               return cubit;
@@ -47,11 +49,11 @@ class AppRouter {
           ),
           settings: settings,
         );
-      
+
       case AppRoutes.cartPage:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_){
+            create: (_) {
               final cubit = CartCubit();
               cubit.getCartItems();
               return cubit;
@@ -64,6 +66,25 @@ class AppRouter {
       case AppRoutes.myOrders:
         return MaterialPageRoute(
           builder: (_) => const MyOrdersPage(),
+          settings: settings,
+        );
+
+      case AppRoutes.paymentPage:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) {
+              final cubit = PaymentCubit();
+              cubit.getPaymentViewData();
+              return cubit;
+            },
+            child: const PaymentPage(),
+          ),
+          settings: settings,
+        );
+
+      case AppRoutes.locationPage:
+        return MaterialPageRoute(
+          builder: (_) => const LocationPage(),
           settings: settings,
         );
       default:
