@@ -84,7 +84,14 @@ class AppRouter {
 
       case AppRoutes.locationPage:
         return MaterialPageRoute(
-          builder: (_) => const LocationPage(),
+          builder: (_) => BlocProvider(
+            create: (context) {
+              final cubit = PaymentCubit();
+              cubit.getPaymentViewData();
+              return cubit;
+            },
+            child: const LocationPage(),
+          ),
           settings: settings,
         );
       default:

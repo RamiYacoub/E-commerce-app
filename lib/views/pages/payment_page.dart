@@ -1,94 +1,130 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_commerce_app/models/product_item_model.dart';
 import 'package:e_commerce_app/utils/app_routes.dart';
 import 'package:e_commerce_app/utils/colors_app.dart';
 import 'package:e_commerce_app/view_models/payment_cubit/payment_cubit.dart';
+import 'package:e_commerce_app/views/widgets/clickable_box_widget.dart';
+import 'package:e_commerce_app/views/widgets/product_item_payment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PaymentPage extends StatelessWidget {
+class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
 
   @override
+  State<PaymentPage> createState() => _PaymentPageState();
+}
+
+class _PaymentPageState extends State<PaymentPage> {
+  @override
   Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<PaymentCubit>(context);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Payment'),
           centerTitle: true,
         ),
         body: BlocBuilder<PaymentCubit, PaymentState>(
-            bloc: BlocProvider.of<PaymentCubit>(context),
+            bloc: cubit,
+            buildWhen: (previous, current) => current is PaymentLoaded,
             builder: (context, state) {
               if (state is PaymentLoading) {
                 return const Center(
                     child: CircularProgressIndicator.adaptive());
-              } // Center
-              else if (state is PaymentLoaded) {
-                return SingleChildScrollView(
-                    child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: Column(children: [
-                    buildInlineHeadlines(
-                        context: context, title: 'Address', onTap: () {}),
-                    const SizedBox(height: 8.0),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context, rootNavigator: true)
-                            .pushNamed(AppRoutes.locationPage);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: AppColors.grey.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(16.0),
+              } else if (state is PaymentLoaded) {
+                final int index = state.locations
+                    .indexWhere((element) => element.isSelected == true);
+                return SafeArea(
+                  child: SingleChildScrollView(
+                      child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Column(children: [
+                      buildInlineHeadlines(
+                          context: context, title: 'Address', onTap: () {}),
+                      const SizedBox(height: 8.0),
+                      if (index != -1)
+                        ClickableBoxWidget(
+                          title: state.locations[index].cityName,
+                          imgUrl: state.locations[index].imgUrl,
+                          subTitle:
+                              '${state.locations[index].cityName}, ${state.locations[index].countryName}',
+                          onTap: () async {
+                            await Navigator.of(context, rootNavigator: true)
+                                .pushNamed(AppRoutes.locationPage);
+                            if (!mounted) return;
+                            setState(() {});
+                          },
+                        )
+                      else
+                        ClickableBoxWidget(
+                          title: "Add Address",
+                          onTap: () async {
+                            await Navigator.of(context, rootNavigator: true)
+                                .pushNamed(AppRoutes.locationPage);
+                            if (!mounted) return;
+                            setState(() {});
+                          },
                         ),
-                        child: const Center(child: Text('Add Address')),
+                      const SizedBox(height: 10.0),
+                      buildInlineHeadlines(
+                          context: context,
+                          title: 'Products',
+                          productsNumbers: state.cartItems.length),
+                      const SizedBox(height: 8.0),
+                      ListView.builder(
+                          itemCount: state.cartItems.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final ProductItemModel item =
+                                state.cartItems[index];
+                            return ProductItemPaymentWidget(item: item);
+                          }),
+                      const SizedBox(height: 8.0),
+                      buildInlineHeadlines(
+                          context: context, title: 'Payment Method'),
+                      const SizedBox(height: 20.0),
+                      ClickableBoxWidget(
+                        title: 'Add Payment Method',
+                        onTap: () {},
                       ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    buildInlineHeadlines(
-                        context: context,
-                        title: 'Products',
-                        productsNumbers: state.cartItems.length),
-                    const SizedBox(height: 8.0),
-                    ListView.builder(
-                        itemCount: state.cartItems.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          final item = state.cartItems[index];
-                          return Row(children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                height: 100,
-                                width: 100,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  child: CachedNetworkImage(
-                                    imageUrl: item.imgUrl,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                      const SizedBox(height: 10.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total Amount',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(color: AppColors.grey),
+                          ),
+                          Text(
+                            '\$${state.total}',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 34.0),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                foregroundColor: AppColors.white,
                               ),
-                            ),
-                            const SizedBox(width: 8.0),
-                            Column(children: [
-                              Text(item.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall),
-                              const Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [])
-                            ]),
-                          ]);
-                        }),
-                    buildInlineHeadlines(
-                        context: context, title: 'Payment Method')
-                  ]),
-                ));
+                              child: const Text('Checkout Now'),
+                            )),
+                      ),
+                      const SizedBox(
+                        height: 34.0,
+                      )
+                    ]),
+                  )),
+                );
               } else if (state is PaymentError) {
                 return Center(
                   child: Text(state.message),
