@@ -3,6 +3,7 @@ import 'package:e_commerce_app/utils/app_routes.dart';
 import 'package:e_commerce_app/utils/colors_app.dart';
 import 'package:e_commerce_app/view_models/payment_cubit/payment_cubit.dart';
 import 'package:e_commerce_app/views/widgets/clickable_box_widget.dart';
+import 'package:e_commerce_app/views/widgets/payment_modal_bottom_sheet.dart';
 import 'package:e_commerce_app/views/widgets/product_item_payment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +26,10 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         body: BlocBuilder<PaymentCubit, PaymentState>(
             bloc: cubit,
-            buildWhen: (previous, current) => current is PaymentLoaded,
+            buildWhen: (previous, current) =>
+                current is PaymentLoaded ||
+                current is PaymentLoading ||
+                current is PaymentError,
             builder: (context, state) {
               if (state is PaymentLoading) {
                 return const Center(
@@ -85,7 +89,15 @@ class _PaymentPageState extends State<PaymentPage> {
                       const SizedBox(height: 20.0),
                       ClickableBoxWidget(
                         title: 'Add Payment Method',
-                        onTap: () {},
+                        onTap: () => showModalBottomSheet(
+                          isScrollControlled: true,
+                          useSafeArea: true,
+                          context: context,
+                          builder: (ctx) => BlocProvider.value(
+                            value: BlocProvider.of<PaymentCubit>(context),
+                            child: const PaymentModalBottomSheetWidget(),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 10.0),
                       Row(
@@ -108,16 +120,17 @@ class _PaymentPageState extends State<PaymentPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                foregroundColor: AppColors.white,
-                              ),
-                              child: const Text('Checkout Now'),
-                            )),
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              foregroundColor: AppColors.white,
+                            ),
+                            child: const Text('Checkout Now'),
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 34.0,

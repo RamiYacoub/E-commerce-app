@@ -6,9 +6,11 @@ import 'package:e_commerce_app/view_models/search_cubit/search_cubit.dart';
 import 'package:e_commerce_app/views/pages/cart_page.dart';
 import 'package:e_commerce_app/views/pages/custom_bottom_navbar.dart';
 import 'package:e_commerce_app/views/pages/location_page.dart';
+import 'package:e_commerce_app/views/pages/login_page.dart';
 import 'package:e_commerce_app/views/pages/my_orders_page.dart';
 import 'package:e_commerce_app/views/pages/payment_page.dart';
 import 'package:e_commerce_app/views/pages/product_details_page.dart';
+import 'package:e_commerce_app/views/pages/register_account_page.dart';
 import 'package:e_commerce_app/views/pages/search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,6 +36,11 @@ class AppRouter {
       case AppRoutes.home:
         return MaterialPageRoute(
           builder: (_) => const CustomBottomNavbar(),
+          settings: settings,
+        );
+      case AppRoutes.login:
+        return MaterialPageRoute(
+          builder: (_) => const LoginPage(),
           settings: settings,
         );
 
@@ -92,6 +99,12 @@ class AppRouter {
             },
             child: const LocationPage(),
           ),
+          settings: settings,
+        );
+
+      case AppRoutes.registerAccountPage:
+        return MaterialPageRoute(
+          builder: (_) => const RegisterAccountPage(),
           settings: settings,
         );
       default:

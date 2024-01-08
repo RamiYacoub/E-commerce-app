@@ -21,3 +21,10 @@ final class PaymentError extends PaymentState {
     required this.message,
   });
 }
+
+final class PaymentMethodChosen extends PaymentState {
+  final String paymentMethodId;
+
+  PaymentMethodChosen({required this.paymentMethodId});
+  
+}
