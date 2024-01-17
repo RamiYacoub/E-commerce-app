@@ -38,6 +38,11 @@ class AppRouter {
           builder: (_) => const CustomBottomNavbar(),
           settings: settings,
         );
+      case AppRoutes.register:
+        return MaterialPageRoute(
+          builder: (_) => const RegisterAccountPage(),
+          settings: settings,
+        );
       case AppRoutes.login:
         return MaterialPageRoute(
           builder: (_) => const LoginPage(),
